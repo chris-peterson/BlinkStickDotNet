@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkStickDotNet", "BlinkStickDotNet\BlinkStickDotNet.csproj", "{5CC6A394-CB05-4C48-8D52-6B6FEFB92982}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{0815753D-C18D-46B6-BB32-A66413504E7B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5CC6A394-CB05-4C48-8D52-6B6FEFB92982}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CC6A394-CB05-4C48-8D52-6B6FEFB92982}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CC6A394-CB05-4C48-8D52-6B6FEFB92982}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CC6A394-CB05-4C48-8D52-6B6FEFB92982}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0815753D-C18D-46B6-BB32-A66413504E7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0815753D-C18D-46B6-BB32-A66413504E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0815753D-C18D-46B6-BB32-A66413504E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0815753D-C18D-46B6-BB32-A66413504E7B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
