@@ -119,5 +119,5 @@ UpgradeLog*.XML
 !/Components/log4net-1.2.11/*/*/*/*/*
 !/Components/plossum-commandline/*
 
-
-
+# Rider
+.idea/

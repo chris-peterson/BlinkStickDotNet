@@ -17,13 +17,16 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Collections.Generic;
+using LibUsbDotNet;
 using LibUsbDotNet.DeviceNotify;
+using LibUsbDotNet.DeviceNotify.Linux;
 
 namespace BlinkStickDotNet
 {
-	public class UsbMonitor
-	{
+    public class UsbMonitor
+    {
         /// <summary>
         /// Occurs when BlinkStick is connected.
         /// </summary>
@@ -61,17 +64,17 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Occurs when usb devices change.
         /// </summary>
-		public event EventHandler UsbDevicesChanged;
-		
+        public event EventHandler UsbDevicesChanged;
+        
         /// <summary>
         /// Raises the usb device changed event.
         /// </summary>
-		protected void OnUsbDevicesChanged()
-		{
-			if (UsbDevicesChanged != null)
-			{
-				UsbDevicesChanged(this, new EventArgs());
-			}
+        protected void OnUsbDevicesChanged()
+        {
+            if (UsbDevicesChanged != null)
+            {
+                UsbDevicesChanged(this, new EventArgs());
+            }
 
             List<BlinkStick> newDevices = new List<BlinkStick>();
 
@@ -103,17 +106,12 @@ namespace BlinkStickDotNet
             }
 
             devices = scannedDevices;
-		}
+        }
 
         /// <summary>
         /// Internal list of tracked devices.
         /// </summary>
         List<BlinkStick> devices;
-
-        /// <summary>
-        /// USB device monitor for Windows.
-        /// </summary>
-		private WinUsbDeviceMonitor winUsbDeviceMonitor;
 
         /// <summary>
         /// USB device monitor for Linux/Mac.
@@ -124,35 +122,34 @@ namespace BlinkStickDotNet
         /// Gets a value indicating whether this <see cref="BlinkStickDotNet.UsbMonitor"/> is monitoring.
         /// </summary>
         /// <value><c>true</c> if monitoring; otherwise, <c>false</c>.</value>
-		public Boolean Monitoring {
-			get;
-			private set;
-		}
+        public Boolean Monitoring {
+            get;
+            private set;
+        }
 
-		public UsbMonitor ()
-		{
-            switch (HidSharp.PlatformDetector.RunningPlatform())
+        public UsbMonitor ()
+        {
+            switch (PlatformDetector.RunningPlatform())
             {
-                case HidSharp.PlatformDetector.Platform.Windows:
-                    winUsbDeviceMonitor = new WinUsbDeviceMonitor();
-                    winUsbDeviceMonitor.DeviceListChanged += HandleDeviceListChanged;
+                case PlatformDetector.Platform.Windows:
+                    throw new NotSupportedException("No windows support at this time");
                     break;
-                case HidSharp.PlatformDetector.Platform.Linux:
+                case PlatformDetector.Platform.Linux:
                     UsbDeviceNotifier = DeviceNotifier.OpenDeviceNotifier();
                     UsbDeviceNotifier.OnDeviceNotify += OnDeviceNotifyEvent;
                     break;
             }
-		}
+        }
 
         /// <summary>
         /// Handles the device list change on Windows.
         /// </summary>
         /// <param name="sender">Sender object</param>
         /// <param name="e">Event args</param>
-		private void HandleDeviceListChanged (object sender, EventArgs e)
-		{
-			OnUsbDevicesChanged();
-		}
+        private void HandleDeviceListChanged (object sender, EventArgs e)
+        {
+            OnUsbDevicesChanged();
+        }
 
         /// <summary>
         /// Handles device list change on Linux/Mac.
@@ -167,8 +164,8 @@ namespace BlinkStickDotNet
         /// <summary>
         /// Start monitoring for added/removed BlinkStick devices.
         /// </summary>
-		public void Start ()
-		{
+        public void Start ()
+        {
             //Get the list of already connected BlinkSticks
             devices = new List<BlinkStick>(BlinkStick.FindAll());
 
@@ -176,40 +173,32 @@ namespace BlinkStickDotNet
             {
                 UsbDeviceNotifier.Enabled = true;
             }
-            else if (winUsbDeviceMonitor != null)
-            {
-                winUsbDeviceMonitor.Enabled = true;
-            }
 
             Monitoring = true;
-		}
+        }
 
         /// <summary>
         /// Stop monitoring for added/removed BlinkStick devices.
         /// </summary>
-		public void Stop ()
-		{
+        public void Stop ()
+        {
             if (UsbDeviceNotifier != null) {
-				UsbDeviceNotifier.Enabled = false;  // Disable the device notifier
+                UsbDeviceNotifier.Enabled = false;  // Disable the device notifier
 
-				UsbDeviceNotifier.OnDeviceNotify -= OnDeviceNotifyEvent;
-			}
-            else if (winUsbDeviceMonitor != null)
-            {
-                winUsbDeviceMonitor.Enabled = false;
+                UsbDeviceNotifier.OnDeviceNotify -= OnDeviceNotifyEvent;
             }
 
-			Monitoring = false;
-		}
+            Monitoring = false;
+        }
 
         /// <summary>
         /// Releases unmanaged resources and performs other cleanup operations before the
         /// <see cref="BlinkStickDotNet.UsbMonitor"/> is reclaimed by garbage collection.
         /// </summary>
-		~UsbMonitor ()
-		{
-		}
-	}
+        ~UsbMonitor ()
+        {
+        }
+    }
 
     /// <summary>
     /// Device modified arguments.
@@ -230,5 +219,60 @@ namespace BlinkStickDotNet
             this.Device = device;
         }
     }
-}
 
+    /// <summary>
+    /// Platform independent class for linux/windows device notification.
+    /// </summary>
+    /// <code source="..\Examples\Device.Notification\DeviceNotification.cs" lang="cs"/>
+    public static class DeviceNotifier
+    {
+        /// <summary>
+        /// Creates a new instance of a device notifier class.
+        /// </summary>
+        /// <returns>A <see cref="WindowsDeviceNotifier"/> under windows and a <see cref="LinuxDeviceNotifier"/> under linux.</returns>
+        public static IDeviceNotifier OpenDeviceNotifier()
+        {
+            if (UsbDevice.IsLinux)
+            {
+                return new LinuxDeviceNotifier();
+            }
+            else
+            {
+                throw new NotSupportedException("Windows is not supported at this time");
+            }
+        }
+    }
+
+    public static class PlatformDetector
+    {
+        public enum Platform
+        {
+            Windows,
+            Linux,
+            Mac
+        }
+
+        public static Platform RunningPlatform()
+        {
+            switch (Environment.OSVersion.Platform)
+            {
+                case PlatformID.Unix:
+                    // Well, there are chances MacOSX is reported as Unix instead of MacOSX.
+                    // Instead of platform check, we'll do a feature checks (Mac specific root folders)
+                    if (Directory.Exists("/Applications")
+                        & Directory.Exists("/System")
+                        & Directory.Exists("/Users")
+                        & Directory.Exists("/Volumes"))
+                        return Platform.Mac;
+                    else
+                        return Platform.Linux;
+
+                case PlatformID.MacOSX:
+                    return Platform.Mac;
+
+                default:
+                    return Platform.Windows;
+            }
+        }
+    }
+}
