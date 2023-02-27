@@ -157,8 +157,10 @@ var colors = new Dictionary<string, string>
     { "yellowgreen", "#9acd32" }
 };
 
+int count = 1;
 foreach (var color in colors)
 {
+    Console.WriteLine($"{count}: {color.Key}");
     for (byte i = 0; i < numLeds; i++)
     {
         blinkstick.SetColor(0, i, color.Value);
@@ -166,4 +168,5 @@ foreach (var color in colors)
     }
 
     blinkstick.WaitThread(1000);
+    count++;
 }

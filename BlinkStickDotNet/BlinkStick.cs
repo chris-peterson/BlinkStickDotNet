@@ -1266,8 +1266,9 @@ namespace BlinkStickDotNet
 
         private void SetFeature(byte[] buffer)
         {
+            int maxAttempts = 100;
             int attempt = 0;
-            while (attempt < 5)
+            while (attempt < maxAttempts)
             {
                 attempt++;
                 try
@@ -1285,10 +1286,10 @@ namespace BlinkStickDotNet
                             return;
                     }
 
-                    if (attempt == 5)
+                    if (attempt == maxAttempts)
                         throw;
 
-                    if (!WaitThread(20))
+                    if (!WaitThread(50))
                         return;
                 }
             }
@@ -1296,8 +1297,9 @@ namespace BlinkStickDotNet
 
         private void GetFeature(byte[] buffer)
         {
+            const int maxAttempts = 100;
             int attempt = 0;
-            while (attempt < 5)
+            while (attempt < maxAttempts)
             {
                 attempt++;
                 try
@@ -1315,10 +1317,10 @@ namespace BlinkStickDotNet
                             return;
                     }
 
-                    if (attempt == 5)
+                    if (attempt == maxAttempts)
                         throw;
 
-                    if (!WaitThread(20))
+                    if (!WaitThread(50))
                         return;
                 }
             }
