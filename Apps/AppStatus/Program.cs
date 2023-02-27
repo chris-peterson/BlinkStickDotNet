@@ -2,20 +2,20 @@
 
 var apps = new Dictionary<string, string>()
 {
-    { "zoom.us", "red" },
-    { "rider", "midnightblue" },
-    { "code helper", "mediumblue" },
-    { "", "black" }
+    { "zoom.us",     "#ff0000" },
+    { "rider",       "#0000ff" },
+    { "code helper", "#0000ff" },
+    { "slack",       "#7f7f7f" },
+    { "",            "#000000" }
 };
 
 using var blinkstick = BlinkStick.FindAll().Single();
 blinkstick.OpenDevice();
-SetColor(blinkstick, "black");
 
 string previousApp = null;
 while (true)
 {
-    var app = ProcessDetector.CheckForApp(apps.Keys);
+    var app = AppDetector.CheckForApp(apps.Keys);
     if (app != previousApp)
     {
         SetColor(blinkstick, apps[app]);

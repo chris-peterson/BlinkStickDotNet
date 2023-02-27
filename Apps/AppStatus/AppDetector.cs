@@ -1,13 +1,13 @@
 using System.Diagnostics;
 
-public class ProcessDetector
+public class AppDetector
 {
     public static string CheckForApp(IEnumerable<string> apps)
     {
         return apps
-                   .FirstOrDefault(app => GetProcessNames()
-                       .Any(p => p.Contains(app.ToLower())))
-               ?? "";
+            .FirstOrDefault(app => GetProcessNames()
+                .Any(p => p.Contains(app.ToLower())))
+        ?? "";
     }
     
     static IEnumerable<string> GetProcessNames()
