@@ -21,6 +21,8 @@ while (true)
         SetColor(blinkstick, apps[app]);
     }
     previousApp = app;
+
+    Thread.Sleep(1000);
 }
 
 void SetColor(BlinkStick blinkStick, string color)
